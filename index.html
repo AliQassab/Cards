@@ -1,0 +1,267 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Sorting Cards Workshop - Interactive Learning Tool</title>
+    <link rel="stylesheet" href="styles.css" />
+  </head>
+  <body>
+    <div class="container">
+      <header>
+        <h1>🃏 Sorting Cards Workshop</h1>
+        <p>
+          Interactive learning tool based on Code Your Future's Complexity
+          Sprint 1
+        </p>
+      </header>
+
+      <div class="workshop-section">
+        <h2>📚 Learning Objectives</h2>
+        <ul>
+          <li>
+            Analyse the actual cost (comparisons + swaps) of particular sorting
+            algorithms
+          </li>
+          <li>
+            Categorise different sorting algorithms by computational complexity
+          </li>
+          <li>Identify when different sorting algorithms are suitable</li>
+          <li>
+            Devise a specialised sorting algorithm for specific kinds of data
+          </li>
+        </ul>
+      </div>
+
+      <div class="card-setup">
+        <h2>🎴 Card Setup</h2>
+        <div class="setup-controls">
+          <label for="cardCount">Number of cards:</label>
+          <select id="cardCount">
+            <option value="5">5 cards</option>
+            <option value="8">8 cards</option>
+            <option value="13" selected>13 cards (one suit)</option>
+          </select>
+
+          <label for="initialOrder">Initial order:</label>
+          <select id="initialOrder">
+            <option value="random">Random</option>
+            <option value="sorted">Sorted (best case)</option>
+            <option value="reverse">Reverse sorted (worst case)</option>
+          </select>
+
+          <button id="shuffleBtn">Shuffle Cards</button>
+          <button id="resetBtn">Reset</button>
+        </div>
+
+        <div id="cardsContainer" class="cards-container"></div>
+      </div>
+
+      <div class="algorithm-section">
+        <h2>🔧 Sorting Algorithms</h2>
+
+        <div class="algorithm-tabs">
+          <button class="tab-btn active" data-algorithm="bubble">
+            Bubble Sort
+          </button>
+          <button class="tab-btn" data-algorithm="insertion">
+            Insertion Sort
+          </button>
+          <button class="tab-btn" data-algorithm="merge">Merge Sort</button>
+          <button class="tab-btn" data-algorithm="counting">
+            Counting Sort (O(n))
+          </button>
+        </div>
+
+        <div class="algorithm-content">
+          <div id="bubble-content" class="algorithm-panel active">
+            <h3>Bubble Sort</h3>
+            <p>
+              <strong>Time Complexity:</strong> O(n²) average and worst case,
+              O(n) best case
+            </p>
+            <p><strong>Space Complexity:</strong> O(1)</p>
+            <p>
+              Bubble sort repeatedly steps through the list, compares adjacent
+              elements and swaps them if they are in the wrong order. The pass
+              through the list is repeated until the list is sorted.
+            </p>
+
+            <div class="controls">
+              <button id="bubbleSortBtn">Start Bubble Sort</button>
+              <button id="bubbleStepBtn" disabled>Step</button>
+              <button id="bubbleResetBtn">Reset</button>
+            </div>
+
+            <div class="stats">
+              <div>Comparisons: <span id="bubbleComparisons">0</span></div>
+              <div>Swaps: <span id="bubbleSwaps">0</span></div>
+              <div>Steps: <span id="bubbleSteps">0</span></div>
+            </div>
+          </div>
+
+          <div id="insertion-content" class="algorithm-panel">
+            <h3>Insertion Sort</h3>
+            <p>
+              <strong>Time Complexity:</strong> O(n²) average and worst case,
+              O(n) best case
+            </p>
+            <p><strong>Space Complexity:</strong> O(1)</p>
+            <p>
+              Insertion sort builds the final sorted array one item at a time.
+              It takes elements from the unsorted portion and inserts them into
+              their correct position in the sorted portion.
+            </p>
+
+            <div class="controls">
+              <button id="insertionSortBtn">Start Insertion Sort</button>
+              <button id="insertionStepBtn" disabled>Step</button>
+              <button id="insertionResetBtn">Reset</button>
+            </div>
+
+            <div class="stats">
+              <div>Comparisons: <span id="insertionComparisons">0</span></div>
+              <div>Swaps: <span id="insertionSwaps">0</span></div>
+              <div>Steps: <span id="insertionSteps">0</span></div>
+            </div>
+          </div>
+
+          <div id="merge-content" class="algorithm-panel">
+            <h3>Merge Sort</h3>
+            <p><strong>Time Complexity:</strong> O(n log n) in all cases</p>
+            <p><strong>Space Complexity:</strong> O(n)</p>
+            <p>
+              Merge sort divides the array into two halves, recursively sorts
+              them, and then merges the sorted halves. It's a divide-and-conquer
+              algorithm.
+            </p>
+
+            <div class="controls">
+              <button id="mergeSortBtn">Start Merge Sort</button>
+              <button id="mergeStepBtn" disabled>Step</button>
+              <button id="mergeResetBtn">Reset</button>
+            </div>
+
+            <div class="stats">
+              <div>Comparisons: <span id="mergeComparisons">0</span></div>
+              <div>Swaps: <span id="mergeSwaps">0</span></div>
+              <div>Steps: <span id="mergeSteps">0</span></div>
+            </div>
+          </div>
+
+          <div id="counting-content" class="algorithm-panel">
+            <h3>Counting Sort (O(n))</h3>
+            <p>
+              <strong>Time Complexity:</strong> O(n) when range of input data is
+              not significantly greater than the number of objects
+            </p>
+            <p>
+              <strong>Space Complexity:</strong> O(k) where k is the range of
+              input
+            </p>
+            <p>
+              This is the special case for sorting cards! Since we know all
+              possible values (A, 2, 3, ..., K), we can create buckets for each
+              value and place cards directly in their correct position.
+            </p>
+
+            <div class="controls">
+              <button id="countingSortBtn">Start Counting Sort</button>
+              <button id="countingStepBtn" disabled>Step</button>
+              <button id="countingResetBtn">Reset</button>
+            </div>
+
+            <div class="stats">
+              <div>Operations: <span id="countingOperations">0</span></div>
+              <div>Steps: <span id="countingSteps">0</span></div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="comparison-section">
+        <h2>📊 Algorithm Comparison</h2>
+        <div class="comparison-table">
+          <table>
+            <thead>
+              <tr>
+                <th>Algorithm</th>
+                <th>Best Case</th>
+                <th>Average Case</th>
+                <th>Worst Case</th>
+                <th>Space</th>
+                <th>Stable</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td>Bubble Sort</td>
+                <td>O(n)</td>
+                <td>O(n²)</td>
+                <td>O(n²)</td>
+                <td>O(1)</td>
+                <td>Yes</td>
+              </tr>
+              <tr>
+                <td>Insertion Sort</td>
+                <td>O(n)</td>
+                <td>O(n²)</td>
+                <td>O(n²)</td>
+                <td>O(1)</td>
+                <td>Yes</td>
+              </tr>
+              <tr>
+                <td>Merge Sort</td>
+                <td>O(n log n)</td>
+                <td>O(n log n)</td>
+                <td>O(n log n)</td>
+                <td>O(n)</td>
+                <td>Yes</td>
+              </tr>
+              <tr>
+                <td>Counting Sort</td>
+                <td>O(n)</td>
+                <td>O(n)</td>
+                <td>O(n)</td>
+                <td>O(k)</td>
+                <td>Yes</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <div class="workshop-activities">
+        <h2>🎯 Workshop Activities</h2>
+        <div class="activity">
+          <h3>Activity 1: Predict and Observe</h3>
+          <p>For each algorithm:</p>
+          <ol>
+            <li>Predict its worst-case computational complexity</li>
+            <li>Predict what order gives the best performance</li>
+            <li>Predict what order gives the worst performance</li>
+            <li>Test with random cards and observe</li>
+            <li>Test with best and worst case scenarios</li>
+            <li>Compare predictions with observations</li>
+          </ol>
+        </div>
+
+        <div class="activity">
+          <h3>Activity 2: The O(n) Challenge</h3>
+          <p>
+            Using a full suit of 13 cards (A, 2, 3, ..., K), devise an algorithm
+            that sorts in O(n) time. This is possible because:
+          </p>
+          <ul>
+            <li>We know all possible values</li>
+            <li>Each value appears exactly once</li>
+            <li>We can calculate the correct position directly</li>
+          </ul>
+          <p>Try the Counting Sort above to see how it works!</p>
+        </div>
+      </div>
+    </div>
+
+    <script src="script.js"></script>
+  </body>
+</html>
