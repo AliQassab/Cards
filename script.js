@@ -282,6 +282,12 @@ function resetAlgorithm(algorithm) {
   isRunning = false;
   currentStep = 0;
 
+  // Reset algorithm-specific variables
+  if (algorithm === "insertion") {
+    insertionIndex = 0;
+    insertionJ = 0;
+  }
+
   // Reset stats for this algorithm
   resetStats(algorithm);
 
@@ -394,11 +400,15 @@ function bubbleSortStep() {
 }
 
 // Insertion Sort Implementation
+let insertionIndex = 0; // Track which element we're inserting
+let insertionJ = 0; // Track position in insertion process
+
 function insertionSortStep() {
   const n = cards.length;
   let completed = false;
 
-  if (currentStep >= n) {
+  // Check if we've processed all elements
+  if (insertionIndex >= n) {
     completed = true;
     return completed;
   }
@@ -406,61 +416,72 @@ function insertionSortStep() {
   // Clear previous highlights
   cards.forEach((card) => {
     if (card.element) {
-      card.element.classList.remove("comparing", "current");
+      card.element.classList.remove("comparing", "current", "sorted");
     }
   });
 
-  // Highlight current element being inserted
-  if (cards[currentStep].element) {
-    cards[currentStep].element.classList.add("current");
+  // Mark all elements before insertionIndex as sorted
+  for (let i = 0; i < insertionIndex; i++) {
+    if (cards[i].element) {
+      cards[i].element.classList.add("sorted");
+    }
   }
 
-  if (currentStep === 0) {
+  // Highlight current element being inserted
+  if (cards[insertionIndex].element) {
+    cards[insertionIndex].element.classList.add("current");
+  }
+
+  if (insertionIndex === 0) {
     // First element is already "sorted"
-    currentStep++;
+    insertionIndex++;
     return false;
   }
 
-  // Find insertion point
-  let j = currentStep;
-  while (j > 0) {
-    stats.insertion.comparisons++;
-
-    if (cards[j - 1].element) {
-      cards[j - 1].element.classList.add("comparing");
-    }
-
-    if (cards[j - 1].numericValue <= cards[j].numericValue) {
-      break;
-    }
-
-    // Swap elements
-    [cards[j - 1], cards[j]] = [cards[j], cards[j - 1]];
-
-    // Update visual positions
-    const container = document.getElementById("cardsContainer");
-    if (j > 1) {
-      container.insertBefore(
-        cards[j].element,
-        cards[j - 2].element.nextSibling
-      );
-    } else {
-      container.insertBefore(cards[j].element, container.firstChild);
-    }
-
-    stats.insertion.swaps++;
-    j--;
-
-    // Clear comparison highlight after a short delay
-    setTimeout(() => {
-      if (cards[j].element) {
-        cards[j].element.classList.remove("comparing");
-      }
-    }, 300);
+  // If we're starting insertion for this element, initialize j
+  if (insertionJ === 0) {
+    insertionJ = insertionIndex;
   }
 
-  currentStep++;
-  return false;
+  // Check if we need to swap with the element to the left
+  if (
+    insertionJ > 0 &&
+    cards[insertionJ - 1].numericValue > cards[insertionJ].numericValue
+  ) {
+    // Highlight the comparison
+    if (cards[insertionJ - 1].element) {
+      cards[insertionJ - 1].element.classList.add("comparing");
+    }
+
+    stats.insertion.comparisons++;
+
+    // Perform the swap
+    [cards[insertionJ - 1], cards[insertionJ]] = [
+      cards[insertionJ],
+      cards[insertionJ - 1],
+    ];
+
+    // Update visual positions by re-rendering all cards
+    const container = document.getElementById("cardsContainer");
+    container.innerHTML = "";
+    cards.forEach((card) => {
+      container.appendChild(card.element);
+    });
+
+    stats.insertion.swaps++;
+    insertionJ--;
+
+    // Continue with the same element
+    return false;
+  } else {
+    // No swap needed, element is in correct position
+    if (insertionJ > 0) {
+      stats.insertion.comparisons++;
+    }
+    insertionIndex++;
+    insertionJ = 0; // Reset for next element
+    return false;
+  }
 }
 
 // Merge Sort Implementation (simplified for visualization)
@@ -569,6 +590,17 @@ function updateDisplay() {
   document.getElementById("countingOperations").textContent =
     stats.counting.operations;
   document.getElementById("countingSteps").textContent = stats.counting.steps;
+
+  // Debug: Log current card order for insertion sort
+  if (currentAlgorithm === "insertion" && isRunning) {
+    console.log(
+      "Insertion Sort Debug - insertionIndex:",
+      insertionIndex,
+      "insertionJ:",
+      insertionJ
+    );
+    console.log("Current order:", cards.map((c) => c.value).join(", "));
+  }
 }
 
 // Utility functions
