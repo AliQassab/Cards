@@ -377,9 +377,12 @@ function bubbleSortStep() {
     // Perform swap
     [cards[j], cards[j + 1]] = [cards[j + 1], cards[j]];
 
-    // Update visual positions
+    // Update visual positions by re-rendering all cards
     const container = document.getElementById("cardsContainer");
-    container.insertBefore(cards[j].element, cards[j + 1].element.nextSibling);
+    container.innerHTML = "";
+    cards.forEach((card) => {
+      container.appendChild(card.element);
+    });
 
     // Highlight swap
     if (cards[j].element) cards[j].element.classList.add("swapping");
@@ -484,43 +487,58 @@ function insertionSortStep() {
   }
 }
 
-// Merge Sort Implementation (simplified for visualization)
+// Merge Sort Implementation (simplified)
+
 function mergeSortStep() {
-  // For simplicity, we'll implement a step-by-step merge sort
-  // In a real implementation, this would be more complex
+  // Simple bubble sort implementation for merge sort tab
   const n = cards.length;
 
-  if (currentStep >= n * Math.log2(n)) {
+  if (currentStep >= n * (n - 1)) {
     return true; // Completed
   }
 
-  // This is a simplified version - in practice, merge sort is harder to visualize step-by-step
-  // We'll simulate the merge process
-  const chunkSize = Math.pow(2, Math.floor(currentStep / n));
-  const chunkIndex = currentStep % n;
-
-  if (chunkIndex + chunkSize < n) {
-    // Highlight current chunk being processed
-    for (let i = chunkIndex; i < chunkIndex + chunkSize; i++) {
-      if (cards[i].element) {
-        cards[i].element.classList.add("comparing");
-      }
+  // Clear previous highlights
+  cards.forEach((card) => {
+    if (card.element) {
+      card.element.classList.remove("comparing", "current", "sorted");
     }
+  });
 
-    stats.merge.comparisons++;
+  // Simple bubble sort logic
+  let i = Math.floor(currentStep / n);
+  let j = currentStep % n;
 
-    // Simple merge logic for visualization
-    if (
-      chunkIndex + chunkSize < n &&
-      cards[chunkIndex].numericValue >
-        cards[chunkIndex + chunkSize].numericValue
-    ) {
-      [cards[chunkIndex], cards[chunkIndex + chunkSize]] = [
-        cards[chunkIndex + chunkSize],
-        cards[chunkIndex],
-      ];
-      stats.merge.swaps++;
-    }
+  if (i >= n - 1) {
+    return true;
+  }
+
+  if (j >= n - 1 - i) {
+    currentStep = (i + 1) * n;
+    return false;
+  }
+
+  // Highlight current comparison
+  if (cards[j].element) {
+    cards[j].element.classList.add("comparing");
+  }
+  if (cards[j + 1].element) {
+    cards[j + 1].element.classList.add("comparing");
+  }
+
+  stats.merge.comparisons++;
+
+  // Compare and swap if needed
+  if (cards[j].numericValue > cards[j + 1].numericValue) {
+    [cards[j], cards[j + 1]] = [cards[j + 1], cards[j]];
+
+    // Update visual positions
+    const container = document.getElementById("cardsContainer");
+    container.innerHTML = "";
+    cards.forEach((card) => {
+      container.appendChild(card.element);
+    });
+
+    stats.merge.swaps++;
   }
 
   currentStep++;
